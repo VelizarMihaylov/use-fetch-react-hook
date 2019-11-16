@@ -1,5 +1,5 @@
 {
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "[javascript]": {
     "editor.formatOnSave": false,
   },
@@ -16,9 +16,25 @@
     {
       "language": "typescript",
       "autoFix": true
+    },
+    {
+      "language": "typescriptreact",
+      "autoFix": true
+    },
+    {
+      "language": "html",
+      "autoFix": false
     }
   ],
-  "stylelint.enable": false,
+  "eslint.options": {
+    "extensinons": [
+      ".ts",
+      ".js",
+      ".tsx",
+      ".jsx"
+    ]
+  },
+  "stylelint.enable": true,
   "stylelint.config": {
     "rules": {
       "block-no-empty": null,
