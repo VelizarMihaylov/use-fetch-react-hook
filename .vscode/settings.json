@@ -20,10 +20,6 @@
     {
       "language": "typescriptreact",
       "autoFix": true
-    },
-    {
-      "language": "html",
-      "autoFix": false
     }
   ],
   "eslint.options": {
