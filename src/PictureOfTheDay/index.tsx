@@ -23,7 +23,9 @@ type PictureOfTheDayProps = {
 const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
   url
 }): React.ReactElement => {
-  const { loading, data, reload } = useFetch<Payload>(url)
+  const { loading, data, reload, error, fetchLazy } = useFetch<Payload>(
+    undefined
+  )
   if (loading) {
     return (
       <>
@@ -40,17 +42,34 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
         <span>Date: {date}</span>
         <h1>{title}</h1>
         <p>{explanation}</p>
-        <button onClick={(): void => reload()}>Reload</button>
+        <button
+          onClick={(): void => {
+            console.log('RELOAD', reload())
+          }}
+        >
+          Reload
+        </button>
       </>
     )
   }
 
   // If not loading or received data show error message
+  if (error) {
+    return (
+      <>
+        <h1>Oops something went wrong!</h1>
+        <button onClick={(): void => reload()}>Retry</button>
+      </>
+    )
+  }
   return (
-    <>
-      <h1>Oops something went wrong!</h1>
-      <button onClick={(): void => reload()}>Retry</button>
-    </>
+    <button
+      onClick={(): void => {
+        fetchLazy('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY')
+      }}
+    >
+      Get Picture
+    </button>
   )
 }
 

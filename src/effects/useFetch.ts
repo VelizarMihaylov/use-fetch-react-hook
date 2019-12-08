@@ -102,9 +102,10 @@ type useFetchResult<P> = {
   data: null | P
   error: boolean
   reload: () => void
+  fetchLazy: (url: string) => void
 }
 
-const useFetch = <P>(url: string): useFetchResult<P> => {
+const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
   /**
    * Here we are making use
    * of the useReducer hook
@@ -113,7 +114,7 @@ const useFetch = <P>(url: string): useFetchResult<P> => {
    * initial state of our app
    */
   const initialState = {
-    loading: true,
+    loading: false,
     data: null,
     error: false
   }
@@ -129,32 +130,35 @@ const useFetch = <P>(url: string): useFetchResult<P> => {
    * get the latest data from the endpoint
    */
   const [reload, setReload] = useState<number>(0)
+  const [link, setLink] = useState<undefined | string>(url)
   /**
    * Since fetching data is a side effect
    * for our React app it is a good idea
    * to keep it in the useEffect hook
    */
   useEffect(() => {
-    // Start fetching and fire up the loading state
-    dispatch({ type: 'FETCH_INIT' })
-    fetch(url)
-      .then(response => {
-        return response.json()
-      })
-      .then((data: P) => {
-        // We got the data so lets add it to the state
-        dispatch({ type: 'FETCH_SUCCESS', payload: data })
-      })
-      .catch(error => {
-        if (error.name === 'AbortError') {
-          // The user aborted the fetch
-          console.log('User aborted the fetch')
-        } else {
-          // Something actually went wrong trigger the error state
-          console.log('ERROR', error.name)
-          dispatch({ type: 'FETCH_FAILURE' })
-        }
-      })
+    if (link) {
+      // Start fetching and fire up the loading state
+      dispatch({ type: 'FETCH_INIT' })
+      fetch(link)
+        .then(response => {
+          return response.json()
+        })
+        .then((data: P) => {
+          // We got the data so lets add it to the state
+          dispatch({ type: 'FETCH_SUCCESS', payload: data })
+        })
+        .catch(error => {
+          if (error.name === 'AbortError') {
+            // The user aborted the fetch
+            console.log('User aborted the fetch')
+          } else {
+            // Something actually went wrong trigger the error state
+            console.log('ERROR', error.name)
+            dispatch({ type: 'FETCH_FAILURE' })
+          }
+        })
+    }
     /**
      * We are adding the reload state to
      * the array of dependencies for useEffect
@@ -163,12 +167,15 @@ const useFetch = <P>(url: string): useFetchResult<P> => {
      * fetch will be triggered when the retry
      * method is called
      */
-  }, [url, reload])
+  }, [link, reload])
 
   return {
     ...state,
     reload: (): void => {
       setReload(reload + 1)
+    },
+    fetchLazy: (url: string): void => {
+      setLink(url)
     }
   }
 }
