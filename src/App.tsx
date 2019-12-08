@@ -6,7 +6,7 @@ import PictureOfTheDay from './PictureOfTheDay'
 const App: React.FC = () => {
   return (
     <div className="App">
-      <PictureOfTheDay url="http://dummy.restapiexample.com/api/v1/employee/1" />
+      <PictureOfTheDay url="https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY" />
     </div>
   )
 }
