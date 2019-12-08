@@ -23,7 +23,7 @@ type PictureOfTheDayProps = {
 const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
   url
 }): React.ReactElement => {
-  const { loading, data, reload } = useFetch<Payload>(url)
+  const { loading, data, error, reload, retries } = useFetch<Payload>(url)
   if (loading) {
     return (
       <>
@@ -41,6 +41,15 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
         <h1>{title}</h1>
         <p>{explanation}</p>
         <button onClick={(): void => reload()}>Reload</button>
+      </>
+    )
+  }
+  // If the component errored 3 times show message
+  if (error && retries > 3) {
+    return (
+      <>
+        <p>Sorry it seems this functionality is not available at the moment</p>
+        <p>Please get in touch with our customer support.</p>
       </>
     )
   }

@@ -102,6 +102,7 @@ type useFetchResult<P> = {
   data: null | P
   error: boolean
   reload: () => void
+  retries: number
 }
 
 const useFetch = <P>(url: string): useFetchResult<P> => {
@@ -169,7 +170,17 @@ const useFetch = <P>(url: string): useFetchResult<P> => {
     ...state,
     reload: (): void => {
       setReload(reload + 1)
-    }
+    },
+    /**
+     * We can even expose the number of retries.
+     * This will allow us inside our
+     * component to limit the number
+     * of retries and block the functionality
+     * after so many retries. Then maybe we
+     * can show a message and ask them to call
+     * customer support or something like that.
+     */
+    retries: reload
   }
 }
 
