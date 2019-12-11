@@ -20,9 +20,7 @@ type PictureOfTheDayProps = {
   url: string
 }
 
-const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
-  url
-}): React.ReactElement => {
+const PictureOfTheDay: React.FC<PictureOfTheDayProps> = (): React.ReactElement => {
   const { loading, data, reload, error, fetchLazy } = useFetch<Payload>(
     undefined
   )
@@ -62,6 +60,8 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
       </>
     )
   }
+
+  // The button that will invoke the lazyFetch and get the image
   return (
     <button
       onClick={(): void => {

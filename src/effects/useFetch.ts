@@ -130,6 +130,11 @@ const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
    * get the latest data from the endpoint
    */
   const [reload, setReload] = useState<number>(0)
+  /**
+   * We are gonna use state to set the fetch link
+   * the initial value will be the url that the hook
+   * is called with a string or undefined value.
+   */
   const [link, setLink] = useState<undefined | string>(url)
   /**
    * Since fetching data is a side effect
@@ -174,6 +179,12 @@ const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
     reload: (): void => {
       setReload(reload + 1)
     },
+    /**
+     * We are adding a new fetchLazy method
+     * to the return value of our hook.
+     * This method will accept a fetch url and
+     * will trigger a fetch action.
+     */
     fetchLazy: (url: string): void => {
       setLink(url)
     }
