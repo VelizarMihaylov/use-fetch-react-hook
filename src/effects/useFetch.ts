@@ -102,6 +102,7 @@ type useFetchResult<P> = {
   data: null | P
   error: boolean
   reload: () => void
+  retries: number
   fetchLazy: (url: string) => void
 }
 
@@ -179,6 +180,16 @@ const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
     reload: (): void => {
       setReload(reload + 1)
     },
+    /**
+     * We can even expose the number of retries.
+     * This will allow us inside our
+     * component to limit the number
+     * of retries and block the functionality
+     * after so many retries. Then maybe we
+     * can show a message and ask them to call
+     * customer support or something like that.
+     */
+    retries: reload,
     /**
      * We are adding a new fetchLazy method
      * to the return value of our hook.

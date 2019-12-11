@@ -17,13 +17,13 @@ type Payload = {
 
 // Adding a type for PictureOfTheDay props
 type PictureOfTheDayProps = {
-  url: string
+  url: string | undefined
 }
 
 const PictureOfTheDay: React.FC<PictureOfTheDayProps> = (): React.ReactElement => {
-  const { loading, data, reload, error, fetchLazy } = useFetch<Payload>(
-    undefined
-  )
+  const { loading, data, error, reload, retries, fetchLazy } = useFetch<
+    Payload
+  >(undefined)
   if (loading) {
     return (
       <>
@@ -47,6 +47,15 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = (): React.ReactElement =
         >
           Reload
         </button>
+      </>
+    )
+  }
+  // If the component errored 3 times show message
+  if (error && retries > 3) {
+    return (
+      <>
+        <p>Sorry it seems this functionality is not available at the moment</p>
+        <p>Please get in touch with our customer support.</p>
       </>
     )
   }
@@ -75,7 +84,7 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = (): React.ReactElement =
 
 //Making sure that the url prop will be set
 PictureOfTheDay.propTypes = {
-  url: PropTypes.string.isRequired
+  url: PropTypes.string
 }
 
 export default PictureOfTheDay
