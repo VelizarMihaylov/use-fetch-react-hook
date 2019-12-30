@@ -23,7 +23,9 @@ type PictureOfTheDayProps = {
 const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
   url
 }): React.ReactElement => {
-  const { loading, data, error, reload, retries } = useFetch<Payload>(url)
+  const { loading, data, error, reload, retries, fetchLazy } = useFetch<
+    Payload
+  >(undefined)
   if (loading) {
     return (
       <>
@@ -40,11 +42,17 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
         <span>Date: {date}</span>
         <h1>{title}</h1>
         <p>{explanation}</p>
-        <button onClick={(): void => reload()}>Reload</button>
+        <button
+          onClick={(): void => {
+            reload()
+          }}
+        >
+          Reload
+        </button>
       </>
     )
   }
-  // If the component errored 3 times show message
+  // If the component error's 3 times show message
   if (error && retries > 3) {
     return (
       <>
@@ -55,11 +63,27 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
   }
 
   // If not loading or received data show error message
+  if (error) {
+    return (
+      <>
+        <h1>Oops something went wrong!</h1>
+        <button onClick={(): void => reload()}>Retry</button>
+      </>
+    )
+  }
+
+  // The button that will invoke the lazyFetch and get the image
   return (
-    <>
-      <h1>Oops something went wrong!</h1>
-      <button onClick={(): void => reload()}>Retry</button>
-    </>
+    <button
+      style={{
+        width: 'auto'
+      }}
+      onClick={(): void => {
+        fetchLazy(url)
+      }}
+    >
+      Show Picture
+    </button>
   )
 }
 
