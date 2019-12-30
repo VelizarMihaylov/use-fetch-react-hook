@@ -81,5 +81,8 @@
     "Openqa",
     "graphql",
     "mihaylv"
-  ]
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

@@ -44,7 +44,7 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
         <p>{explanation}</p>
         <button
           onClick={(): void => {
-            console.log('RELOAD', reload())
+            reload()
           }}
         >
           Reload
@@ -75,6 +75,9 @@ const PictureOfTheDay: React.FC<PictureOfTheDayProps> = ({
   // The button that will invoke the lazyFetch and get the image
   return (
     <button
+      style={{
+        width: 'auto'
+      }}
       onClick={(): void => {
         fetchLazy(url)
       }}

@@ -143,6 +143,10 @@ const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
    * to keep it in the useEffect hook
    */
   useEffect(() => {
+    /**
+     * We need to make sure that the link is defined
+     * before we try to fetch the data.
+     */
     if (link) {
       // Start fetching and fire up the loading state
       dispatch({ type: 'FETCH_INIT' })
