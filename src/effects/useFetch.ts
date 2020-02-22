@@ -142,33 +142,49 @@ const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
    * for our React app it is a good idea
    * to keep it in the useEffect hook
    */
-  useEffect(() => {
-    /**
-     * We need to make sure that the link is defined
-     * before we try to fetch the data.
-     */
-    if (link) {
-      // Start fetching and fire up the loading state
-      dispatch({ type: 'FETCH_INIT' })
-      fetch(link)
-        .then(response => {
-          return response.json()
-        })
-        .then((data: P) => {
-          // We got the data so lets add it to the state
-          dispatch({ type: 'FETCH_SUCCESS', payload: data })
-        })
-        .catch(error => {
-          if (error.name === 'AbortError') {
-            // The user aborted the fetch
-            console.log('User aborted the fetch')
-          } else {
-            // Something actually went wrong trigger the error state
-            console.log('ERROR', error.name)
-            dispatch({ type: 'FETCH_FAILURE' })
-          }
-        })
-    }
+  useEffect(
+    () => {
+      /**
+       * We are using the experimental AbortController API
+       * This will help us abort the fetch call when the
+       * component unmounted
+       * */
+      const controller = new AbortController()
+      const signal = controller.signal
+      /**
+       * We need to make sure that the link is defined
+       * before we try to fetch the data.
+       */
+      if (link) {
+        // Start fetching and fire up the loading state
+        dispatch({ type: 'FETCH_INIT' })
+        // Don't forget to add the signal property to the second param of fetch
+        fetch(link, { signal })
+          .then(response => response.json())
+          .then((data: P) => {
+            // We got the data so lets add it to the state
+            dispatch({ type: 'FETCH_SUCCESS', payload: data })
+          })
+          .catch(error => {
+            if (error.name === 'AbortError') {
+              // The user aborted the fetch
+              console.log('User aborted the fetch')
+            } else {
+              // Something actually went wrong trigger the error state
+              console.log('ERROR', error)
+              dispatch({ type: 'FETCH_FAILURE' })
+            }
+          })
+      }
+      /**
+       * We can return a function in the useFetch callback
+       * This function will be called when the component un mounts
+       */
+      return (): void => {
+        // Abort the fetch when the component un mounts
+        controller.abort()
+      }
+    },
     /**
      * We are adding the reload state to
      * the array of dependencies for useEffect
@@ -177,7 +193,8 @@ const useFetch = <P>(url: undefined | string): useFetchResult<P> => {
      * fetch will be triggered when the retry
      * method is called
      */
-  }, [link, reload])
+    [link, reload]
+  )
 
   return {
     ...state,
